@@ -1,5 +1,9 @@
 name: Build
 on: [push,pull_request]
+
+permissions:
+ contents: write
+
 jobs:
  core:
   runs-on: ubuntu-latest
@@ -38,3 +42,20 @@ jobs:
      with:
       gradle-version: "8.10"
    - run: gradle -p apps/android assembleDebug --no-daemon
+   - name: Publish Android release
+     if: github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')
+     env:
+      GH_TOKEN: ${{ github.token }}
+     run: |
+      test -f apps/android/app/build/outputs/apk/debug/app-debug.apk
+      gh release create v0.1.0 \
+       apps/android/app/build/outputs/apk/debug/app-debug.apk#AOB-Speaker-Pro-v0.1.0.apk \
+       --title "AOB Speaker Pro v0.1.0" \
+       --notes "First Android release of AOB Speaker Pro.
+
+Android:
+- Version: 0.1.0
+- Minimum Android: 8.0 (API 26)
+- Target Android: 15 (API 35)
+
+Built from the verified Android CI pipeline."
