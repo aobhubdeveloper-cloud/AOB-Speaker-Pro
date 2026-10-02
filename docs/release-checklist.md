@@ -1,0 +1,11 @@
+# Release checklist
+- [ ] Windows x64 build reproducible from pinned toolchain
+- [ ] Android APK/AAB builds on clean CI
+- [ ] Opus/Oboe revisions pinned and third-party notices updated
+- [ ] Protocol fuzz corpus passes malformed length/version/checksum cases
+- [ ] 5 GHz Wi-Fi soak test passes without unbounded memory growth
+- [ ] screen-off playback and service recovery tested
+- [ ] multi-receiver clock drift measured on physical devices
+- [ ] Windows installer signed; SHA-256 published
+- [ ] Android release signed; Play/App distribution metadata reviewed
+- [ ] SBOM and licenses attached
