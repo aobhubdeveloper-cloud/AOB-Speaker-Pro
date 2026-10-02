@@ -9,6 +9,7 @@ class Discovery(context:Context){
  override fun onServiceResolved(r:NsdServiceInfo){r.host?.hostAddress?.let{onFound(it,r.port)}}
  override fun onResolveFailed(s:NsdServiceInfo,e:Int){}
  })}
+ override fun onServiceLost(s:NsdServiceInfo){}
  override fun onDiscoveryStarted(s:String){}
  override fun onDiscoveryStopped(s:String){}
  override fun onStartDiscoveryFailed(s:String,e:Int){nsd.stopServiceDiscovery(this)}
