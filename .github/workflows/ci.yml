@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  repository-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate core documentation
+        shell: bash
+        run: |
+          test -f README.md
+          test -f LICENSE
+          test -f docs/architecture.md
+          test -f docs/protocol.md
+          test -f docs/audio-quality.md
+          test -f docs/development.md
+          test -f third_party/THIRD_PARTY_NOTICES.md
