@@ -1,0 +1,27 @@
+name: Bug report
+description: Report a reproducible AOB Speaker Pro problem
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+  - type: input
+    id: android
+    attributes:
+      label: Android device and version
+  - type: input
+    id: network
+    attributes:
+      label: Connection type
+      placeholder: 5 GHz Wi-Fi / 2.4 GHz Wi-Fi / USB
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: Include latency, packet loss, underruns, and relevant logs.
