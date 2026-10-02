@@ -1,0 +1,3 @@
+#include "opuspipeline.hpp"
+#include <opus/opus.h>
+namespace aob{bool OpusPipeline::open(int sr,int ch,int bitrate){int e=0;auto*x=opus_encoder_create(sr,ch,OPUS_APPLICATION_AUDIO,&e);if(e)return false;opus_encoder_ctl(x,OPUS_SET_BITRATE(bitrate));e_=x;ch_=ch;return true;}size_t OpusPipeline::encode(std::span<const float>p,std::span<unsigned char>o){if(!e_)return 0;int n=opus_encode_float((OpusEncoder*)e_,p.data(),int(p.size()/ch_),o.data(),int(o.size()));return n>0?(size_t)n:0;}void OpusPipeline::close(){if(e_)opus_encoder_destroy((OpusEncoder*)e_),e_=nullptr;}}

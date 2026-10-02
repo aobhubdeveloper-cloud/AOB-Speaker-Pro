@@ -1,0 +1,8 @@
+#include "aob/packet.hpp"
+#include <cstring>
+namespace aob{
+static void p16(uint8_t*p,uint16_t v){p[0]=v>>8;p[1]=v;} static void p32(uint8_t*p,uint32_t v){for(int i=0;i<4;i++)p[i]=v>>(24-8*i);} static void p64(uint8_t*p,uint64_t v){for(int i=0;i<8;i++)p[i]=v>>(56-8*i);}
+static uint16_t g16(const uint8_t*p){return uint16_t(p[0]<<8|p[1]);} static uint32_t g32(const uint8_t*p){uint32_t v=0;for(int i=0;i<4;i++)v=(v<<8)|p[i];return v;} static uint64_t g64(const uint8_t*p){uint64_t v=0;for(int i=0;i<8;i++)v=(v<<8)|p[i];return v;}
+size_t serialize_audio(const AudioPacket&p,std::span<uint8_t>o){constexpr size_t H=44;if(p.payload.size()>kMaxPayload||o.size()<H+p.payload.size())return 0;p32(o.data(),kMagic);o[4]=1;o[5]=0;o[6]=1;o[7]=0;p32(o.data()+8,p.stream_id);p64(o.data()+12,p.sequence);p64(o.data()+20,p.timestamp_frames);p32(o.data()+28,p.sample_rate);p16(o.data()+32,p.channels);p16(o.data()+34,p.frame_ms);p32(o.data()+36,uint32_t(p.payload.size()));uint32_t c=2166136261u;for(auto b:p.payload)c=(c^b)*16777619u;p32(o.data()+40,c);memcpy(o.data()+H,p.payload.data(),p.payload.size());return H+p.payload.size();}
+bool deserialize_audio(std::span<const uint8_t>in,AudioPacket&p,std::span<const uint8_t>&pl){constexpr size_t H=44;if(in.size()<H||g32(in.data())!=kMagic||in[4]!=1||in[6]!=1)return false;auto n=g32(in.data()+36);if(n>kMaxPayload||H+n!=in.size())return false;uint32_t c=2166136261u;for(size_t i=0;i<n;i++)c=(c^in[H+i])*16777619u;if(c!=g32(in.data()+40))return false;p.stream_id=g32(in.data()+8);p.sequence=g64(in.data()+12);p.timestamp_frames=g64(in.data()+20);p.sample_rate=g32(in.data()+28);p.channels=g16(in.data()+32);p.frame_ms=g16(in.data()+34);pl=in.subspan(H,n);p.payload=pl;return true;}
+}

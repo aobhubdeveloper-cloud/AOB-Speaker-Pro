@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.22)
+project(aob_audio)
+set(CMAKE_CXX_STANDARD 20)
+include(FetchContent)
+FetchContent_Declare(oboe GIT_REPOSITORY https://github.com/google/oboe.git GIT_TAG 1.9.3)
+FetchContent_MakeAvailable(oboe)
+add_library(aob_audio SHARED native_audio.cpp)
+target_link_libraries(aob_audio PRIVATE oboe log android)
