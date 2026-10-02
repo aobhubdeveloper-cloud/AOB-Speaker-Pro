@@ -46,7 +46,7 @@ public:
     }
 };
 
-static oboe::ManagedStream stream;
+static std::shared_ptr<oboe::AudioStream> stream;
 static Callback callback;
 
 static void receiver(int port) {
