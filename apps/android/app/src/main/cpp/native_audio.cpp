@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <opus/opus.h>
+#include <opus.h>
 #include <oboe/Oboe.h>
 #include "aob/packet.hpp"
 static std::atomic<bool>running{false};static int sockfd=-1;static std::thread rx;
