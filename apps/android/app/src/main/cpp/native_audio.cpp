@@ -46,7 +46,7 @@ public:
     }
 };
 
-static oboe::ManagedStream stream;
+static oboe::AudioStream* stream = nullptr;
 static Callback callback;
 
 static void receiver(int port) {
@@ -138,8 +138,8 @@ Java_com_aobhub_speakerpro_AudioReceiverService_nativeStart(
     const oboe::Result result = builder.openStream(&stream);
     if (result != oboe::Result::OK) return JNI_FALSE;
 
-    if (stream->requestStart() != oboe::Result::OK) {
-        stream->close();
+    if (!stream || stream->requestStart() != oboe::Result::OK) {
+        if (stream) { stream->close(); stream = nullptr; }
         return JNI_FALSE;
     }
 
@@ -161,5 +161,6 @@ Java_com_aobhub_speakerpro_AudioReceiverService_nativeStop(
     if (stream) {
         stream->requestStop();
         stream->close();
+        stream = nullptr;
     }
 }
