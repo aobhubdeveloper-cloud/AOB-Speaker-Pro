@@ -7,3 +7,5 @@ Release workflow enabled. [release]
 Release trigger retry. [release]
 
 Final release trigger. [release]
+
+Permissions fix retry. [release]
