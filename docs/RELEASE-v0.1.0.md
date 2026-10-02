@@ -5,3 +5,5 @@ First Android release. The APK is published from the verified Build workflow.
 Release workflow enabled. [release]
 
 Release trigger retry. [release]
+
+Final release trigger. [release]
