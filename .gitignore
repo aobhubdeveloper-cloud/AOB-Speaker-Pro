@@ -1,0 +1,25 @@
+# Build
+build/
+out/
+dist/
+target/
+
+# Android
+.gradle/
+local.properties/
+**/build/
+captures/
+
+# IDE
+.idea/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated
+*.log
+*.tmp
