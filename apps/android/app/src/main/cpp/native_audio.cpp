@@ -135,7 +135,7 @@ Java_com_aobhub_speakerpro_AudioReceiverService_nativeStart(
     builder.setFormat(oboe::AudioFormat::Float);
     builder.setDataCallback(&callback);
 
-    const oboe::Result result = builder.openStream(&stream);
+    const oboe::Result result = builder.openStream(stream);
     if (result != oboe::Result::OK) return JNI_FALSE;
 
     if (stream->requestStart() != oboe::Result::OK) {
