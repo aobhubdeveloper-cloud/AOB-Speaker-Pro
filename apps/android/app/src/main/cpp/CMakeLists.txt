@@ -25,7 +25,10 @@ set(OPUS_INSTALL_CMAKE_CONFIG_MODULE ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(opus)
 
-add_library(aob_audio SHARED native_audio.cpp)
+add_library(aob_audio SHARED
+    native_audio.cpp
+    ../../../../../../core/protocol/src/packet.cpp
+)
 
 target_include_directories(aob_audio
     PRIVATE
