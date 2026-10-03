@@ -9,3 +9,5 @@ Release trigger retry. [release]
 Final release trigger. [release]
 
 Permissions fix retry. [release]
+
+Windows x86/x64 release trigger. [release]
