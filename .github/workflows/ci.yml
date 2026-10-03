@@ -75,6 +75,39 @@ jobs:
         run: |
           gh release upload v0.1.0 "AOB-Speaker-Pro-Windows-x64-v0.1.0.exe" "AOB-Speaker-Pro-Windows-x86-v0.1.0.exe" --clobber
 
+  release-verification:
+    if: github.event_name == 'push'
+    needs: [windows-release, android-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required GitHub Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE_TAG="v0.1.0"
+          REQUIRED=(
+            "AOB-Speaker-Pro-v0.1.0.apk"
+            "AOB-Speaker-Pro-Windows-x64-v0.1.0.exe"
+            "AOB-Speaker-Pro-Windows-x86-v0.1.0.exe"
+          )
+
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' > release-assets.txt
+          echo "Published release assets:"
+          cat release-assets.txt
+
+          for asset in "${REQUIRED[@]}"; do
+            if ! grep -Fxq "$asset" release-assets.txt; then
+              echo "::error::Required release asset missing: $asset"
+              exit 1
+            fi
+          done
+
+          echo "All required Android and Windows release assets are uploaded and visible to GitHub."
+          gh release view "$RELEASE_TAG" --json assets             --jq '.assets[] | select(.name=="AOB-Speaker-Pro-v0.1.0.apk" or .name=="AOB-Speaker-Pro-Windows-x64-v0.1.0.exe" or .name=="AOB-Speaker-Pro-Windows-x86-v0.1.0.exe") | "\(.name) \(.state) \(.size) bytes \(.digest)"'
+
   android-release:
     runs-on: ubuntu-latest
     steps:
