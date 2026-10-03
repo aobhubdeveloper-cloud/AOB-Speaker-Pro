@@ -13,3 +13,5 @@ Permissions fix retry. [release]
 Windows x86/x64 release trigger. [release]
 
 Windows release retry.
+
+Windows vcpkg configuration retry.
