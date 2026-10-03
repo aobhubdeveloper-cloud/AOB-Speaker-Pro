@@ -110,4 +110,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           test -f apps/android/app/build/outputs/apk/debug/app-debug.apk
-          gh release create v0.1.0 apps/android/app/build/outputs/apk/debug/app-debug.apk#AOB-Speaker-Pro-v0.1.0.apk --title "AOB Speaker Pro v0.1.0" --notes "First Android release of AOB Speaker Pro."
+          gh release upload v0.1.0 "apps/android/app/build/outputs/apk/debug/app-debug.apk#AOB-Speaker-Pro-v0.1.0.apk" --clobber
