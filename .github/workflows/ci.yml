@@ -32,34 +32,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Check release marker
-        id: release
-        if: github.event_name == 'push'
-        shell: pwsh
-        env:
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        run: |
-          if ($env:COMMIT_MESSAGE -match '\\[release\\]') { "should_release=true" >> $env:GITHUB_OUTPUT } else { "should_release=false" >> $env:GITHUB_OUTPUT }
       - name: Configure x64
-        if: steps.release.outputs.should_release == 'true'
         run: cmake -S . -B build/windows-x64 -A x64 -DCMAKE_BUILD_TYPE=Release
       - name: Build x64
-        if: steps.release.outputs.should_release == 'true'
         run: cmake --build build/windows-x64 --config Release --parallel
       - name: Configure x86
-        if: steps.release.outputs.should_release == 'true'
         run: cmake -S . -B build/windows-x86 -A Win32 -DCMAKE_BUILD_TYPE=Release
       - name: Build x86
-        if: steps.release.outputs.should_release == 'true'
         run: cmake --build build/windows-x86 --config Release --parallel
       - name: Package Windows releases
-        if: steps.release.outputs.should_release == 'true'
         shell: pwsh
         run: |
           Compress-Archive -Path build/windows-x64/Release/* -DestinationPath AOB-Speaker-Pro-Windows-x64-v0.1.0.zip -Force
           Compress-Archive -Path build/windows-x86/Release/* -DestinationPath AOB-Speaker-Pro-Windows-x86-v0.1.0.zip -Force
       - name: Publish Windows assets
-        if: steps.release.outputs.should_release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
@@ -87,14 +73,12 @@ jobs:
           fi
 
       - name: Build Android APK
-        if: steps.release.outputs.should_release == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Install Android SDK
-        if: steps.release.outputs.should_release == 'true'
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
@@ -105,17 +89,14 @@ jobs:
           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "ndk;27.2.12479018"
 
       - name: Setup Gradle
-        if: steps.release.outputs.should_release == 'true'
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10"
 
       - name: Assemble Android APK
-        if: steps.release.outputs.should_release == 'true'
         run: gradle -p apps/android assembleDebug --no-daemon
 
       - name: Publish GitHub Release
-        if: steps.release.outputs.should_release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
