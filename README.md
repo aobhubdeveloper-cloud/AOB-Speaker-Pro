@@ -15,7 +15,7 @@ AOB Speaker Pro is an open-source, low-latency audio streaming system for sendin
 - Windows 10/11 first-class support
 - Open protocol and reproducible builds
 
-## Planned architecture
+## Release architecture
 
 ```
 Windows 10/11
@@ -64,7 +64,7 @@ third_party/
   workflows/
 ```
 
-## Key features planned
+## Implemented release features
 
 - WASAPI loopback capture
 - 48 kHz stereo pipeline
@@ -112,7 +112,18 @@ See `third_party/THIRD_PARTY_NOTICES.md` for attribution policy.
 
 MIT License. See [LICENSE](LICENSE).
 
+## Release support
+
+**v0.1.0 cross-platform release target**
+
+- **Windows x64:** supported release executable (`AOB-Speaker-Pro-Windows-x64-v0.1.0.exe`)
+- **Windows x86:** supported release executable (`AOB-Speaker-Pro-Windows-x86-v0.1.0.exe`)
+- **Android:** debug APK release asset (`AOB-Speaker-Pro-v0.1.0.apk`)
+- GitHub Actions validates the Windows x64/x86 builds, Android APK build, core unit tests, documentation gates, and required release-asset presence.
+- Release assets are verified by CI after both platform release jobs complete.
+
+See [docs/RELEASE-v0.1.0.md](docs/RELEASE-v0.1.0.md) and [docs/release-checklist.md](docs/release-checklist.md) for release validation details.
+
 ## Status
 
-Early development — architecture and scaffold stage.
-
+Cross-platform release artifacts are published for Windows x64/x86 and Android. The repository continues to distinguish implemented release functionality from future roadmap work.
