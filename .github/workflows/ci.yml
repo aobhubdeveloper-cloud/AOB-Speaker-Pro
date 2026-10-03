@@ -27,6 +27,46 @@ jobs:
           test -f docs/development.md
           test -f third_party/THIRD_PARTY_NOTICES.md
 
+  windows-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check release marker
+        id: release
+        if: github.event_name == 'push'
+        shell: pwsh
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if ($env:COMMIT_MESSAGE -match '\\[release\\]') { "should_release=true" >> $env:GITHUB_OUTPUT } else { "should_release=false" >> $env:GITHUB_OUTPUT }
+      - name: Configure x64
+        if: steps.release.outputs.should_release == 'true'
+        run: cmake -S . -B build/windows-x64 -A x64 -DCMAKE_BUILD_TYPE=Release
+      - name: Build x64
+        if: steps.release.outputs.should_release == 'true'
+        run: cmake --build build/windows-x64 --config Release --parallel
+      - name: Configure x86
+        if: steps.release.outputs.should_release == 'true'
+        run: cmake -S . -B build/windows-x86 -A Win32 -DCMAKE_BUILD_TYPE=Release
+      - name: Build x86
+        if: steps.release.outputs.should_release == 'true'
+        run: cmake --build build/windows-x86 --config Release --parallel
+      - name: Package Windows releases
+        if: steps.release.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path build/windows-x64/Release/* -DestinationPath AOB-Speaker-Pro-Windows-x64-v0.1.0.zip -Force
+          Compress-Archive -Path build/windows-x86/Release/* -DestinationPath AOB-Speaker-Pro-Windows-x86-v0.1.0.zip -Force
+      - name: Publish Windows assets
+        if: steps.release.outputs.should_release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release upload v0.1.0 AOB-Speaker-Pro-Windows-x64-v0.1.0.zip --clobber
+          gh release upload v0.1.0 AOB-Speaker-Pro-Windows-x86-v0.1.0.zip --clobber
+
   android-release:
     runs-on: ubuntu-latest
     steps:
