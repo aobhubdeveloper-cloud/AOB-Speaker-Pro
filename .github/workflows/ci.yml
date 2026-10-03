@@ -25,6 +25,17 @@ jobs:
           test -f docs/development.md
           test -f third_party/THIRD_PARTY_NOTICES.md
 
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure unit tests
+        run: cmake -S . -B build/tests -DCMAKE_BUILD_TYPE=Debug
+      - name: Build unit tests
+        run: cmake --build build/tests --parallel
+      - name: Run CTest
+        run: ctest --test-dir build/tests --output-on-failure --no-tests=error
+
   windows-release:
     runs-on: windows-latest
     steps:
