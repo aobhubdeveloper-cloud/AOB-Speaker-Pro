@@ -15,3 +15,5 @@ Windows x86/x64 release trigger. [release]
 Windows release retry.
 
 Windows vcpkg configuration retry.
+
+Package actual Windows binaries retry.
