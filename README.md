@@ -116,3 +116,15 @@ MIT License. See [LICENSE](LICENSE).
 
 Early development — architecture and scaffold stage.
 
+
+
+## Windows + Android Wi-Fi MVP
+
+1. Connect the Windows PC and Android phone to the same Wi-Fi/LAN.
+2. On Windows, run `setup-windows-firewall.ps1` once as Administrator.
+3. Install and open the AOB Speaker Pro Android APK.
+4. Tap **Start Receiver**. The Android app sends a LAN discovery beacon every second.
+5. Start `aob-speaker-pro.exe` on Windows. It automatically discovers the Android receiver and begins WASAPI → Opus → UDP audio streaming.
+6. No Android IP address is required.
+
+The MVP uses UDP 4678 for discovery and UDP 4677 for audio. The Windows sender waits for a receiver instead of failing because a hard-coded IP is unavailable.
