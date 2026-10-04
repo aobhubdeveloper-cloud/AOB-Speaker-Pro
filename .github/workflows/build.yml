@@ -17,6 +17,13 @@ jobs:
      shell: pwsh
      run: cmake -S . -B build/windows -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
    - run: cmake --build build/windows --config Release --parallel
+   - name: Package Windows
+     shell: pwsh
+     run: Compress-Archive -Path build/windows/Release/aob-speaker-pro.exe -DestinationPath aob-speaker-pro-windows.zip
+   - uses: actions/upload-artifact@v4
+     with:
+      name: aob-speaker-pro-windows
+      path: aob-speaker-pro-windows.zip
  android:
   runs-on: ubuntu-latest
   steps:
@@ -31,10 +38,13 @@ jobs:
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
      run: |
       SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-      test -x "$SDKMANAGER"
       yes | "$SDKMANAGER" --licenses >/dev/null || true
       "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "ndk;27.2.12479018"
    - uses: gradle/actions/setup-gradle@v4
      with:
       gradle-version: "8.10"
    - run: gradle -p apps/android assembleDebug --no-daemon
+   - uses: actions/upload-artifact@v4
+     with:
+      name: aob-speaker-pro-android
+      path: apps/android/app/build/outputs/apk/debug/*.apk
