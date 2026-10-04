@@ -19,7 +19,7 @@ jobs:
    - run: cmake --build build/windows --config Release --parallel
    - name: Package Windows
      shell: pwsh
-     run: Compress-Archive -Path build/windows/Release/aob-speaker-pro.exe -DestinationPath aob-speaker-pro-windows.zip
+     run: Compress-Archive -Path build/windows/apps/windows/Release/* -DestinationPath aob-speaker-pro-windows.zip
    - uses: actions/upload-artifact@v4
      with:
       name: aob-speaker-pro-windows
