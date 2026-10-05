@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var running by remember { mutableStateOf(AudioReceiverService.isRunning(this)) }
             var status by remember { mutableStateOf(AudioReceiverService.status(this)) }
+            var port by remember { mutableStateOf("4677") }
 
             LaunchedEffect(Unit) {
                 while (true) {
@@ -44,26 +45,34 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize()) {
                     Column(
                         Modifier.fillMaxSize().padding(24.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Spacer(Modifier.height(24.dp))
                         Text("AOB Speaker Pro", style = MaterialTheme.typography.headlineMedium)
-                        Text("Turn Your Android Into Your PC Speaker",
-                            style = MaterialTheme.typography.bodyLarge)
+                        Text("Turn Your Android Into Your PC Speaker", style = MaterialTheme.typography.bodyLarge)
+                        OutlinedTextField(
+                            value = port,
+                            onValueChange = { port = it.filter(Char::isDigit).take(5) },
+                            label = { Text("UDP port") },
+                            singleLine = true,
+                            enabled = !running,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         Card(Modifier.fillMaxWidth()) {
                             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(if (running) "● RECEIVER RUNNING" else "○ RECEIVER STOPPED",
                                     style = MaterialTheme.typography.titleMedium)
                                 Text(status)
-                                Text("UDP audio port: 4677")
+                                Text("Use the same UDP port on Windows.")
                             }
                         }
                         Button(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
+                                val value = port.toIntOrNull()?.coerceIn(1, 65535) ?: 4677
                                 ContextCompat.startForegroundService(
                                     this@MainActivity,
                                     Intent(this@MainActivity, AudioReceiverService::class.java)
+                                        .putExtra("port", value)
                                 )
                             },
                             enabled = !running
@@ -73,8 +82,7 @@ class MainActivity : ComponentActivity() {
                             onClick = { stopService(Intent(this@MainActivity, AudioReceiverService::class.java)) },
                             enabled = running
                         ) { Text("Stop Receiver") }
-                        Text("Windows PC: run aob-speaker-pro <Android-IP> 4677")
-                        Text("Keep both devices on the same Wi-Fi network. The receiver stays active with a foreground notification.",
+                        Text("Windows: enter this phone's IP and the same UDP port, then Start.",
                             style = MaterialTheme.typography.bodySmall)
                     }
                 }
