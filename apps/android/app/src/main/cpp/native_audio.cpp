@@ -66,7 +66,14 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_aobhub_speakerpro_AudioReceiverSe
  sockaddr_in address{};address.sin_family=AF_INET;address.sin_addr.s_addr=INADDR_ANY;address.sin_port=htons(static_cast<uint16_t>(port));
  if(bind(probe,reinterpret_cast<sockaddr*>(&address),sizeof(address))<0){close(probe);return JNI_FALSE;}
  close(probe);
- oboe::AudioStreamBuilder builder;builder.setDirection(oboe::Direction::Output).setPerformanceMode(oboe::PerformanceMode::LowLatency).setSharingMode(oboe::SharingMode::Exclusive).setChannelCount(2).setSampleRate(48000).setFormat(oboe::AudioFormat::Float).setDataCallback(&callback);
+ oboe::AudioStreamBuilder builder;
+ builder.setDirection(oboe::Direction::Output);
+ builder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
+ builder.setSharingMode(oboe::SharingMode::Exclusive);
+ builder.setChannelCount(2);
+ builder.setSampleRate(48000);
+ builder.setFormat(oboe::AudioFormat::Float);
+ builder.setDataCallback(&callback);
  if(builder.openStream(stream)!=oboe::Result::OK)return JNI_FALSE;
  if(stream->requestStart()!=oboe::Result::OK){stream->close();return JNI_FALSE;}
  head.store(0);tail.store(0);running.store(true,std::memory_order_release);rx=std::thread(receiver,static_cast<int>(port));return JNI_TRUE;
