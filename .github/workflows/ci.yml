@@ -49,12 +49,28 @@ jobs:
       - name: Build x64
         run: cmake --build build/windows-x64 --config Release --parallel
 
+      - name: Run Windows x64 executable self-test
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem build/windows-x64 -Recurse -Filter aob-speaker-pro.exe -File | Select-Object -First 1
+          if (-not $exe) { throw "Windows x64 executable was not produced." }
+          & $exe.FullName --self-test
+          if ($LASTEXITCODE -ne 0) { throw "Windows x64 self-test failed with exit code $LASTEXITCODE." }
+
       - name: Configure x86
         shell: pwsh
         run: cmake -S . -B build/windows-x86 -A Win32 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x86-windows-static
 
       - name: Build x86
         run: cmake --build build/windows-x86 --config Release --parallel
+
+      - name: Run Windows x86 executable self-test
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem build/windows-x86 -Recurse -Filter aob-speaker-pro.exe -File | Select-Object -First 1
+          if (-not $exe) { throw "Windows x86 executable was not produced." }
+          & $exe.FullName --self-test
+          if ($LASTEXITCODE -ne 0) { throw "Windows x86 self-test failed with exit code $LASTEXITCODE." }
 
       - name: Prepare direct Windows executables
         shell: pwsh
