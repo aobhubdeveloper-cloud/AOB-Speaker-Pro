@@ -154,4 +154,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           test -f apps/android/app/build/outputs/apk/debug/app-debug.apk
-          gh release upload v0.1.0 "apps/android/app/build/outputs/apk/debug/app-debug.apk#AOB-Speaker-Pro-v0.1.0.apk" --clobber
+          cp apps/android/app/build/outputs/apk/debug/app-debug.apk AOB-Speaker-Pro-v0.1.0.apk
+          test -f AOB-Speaker-Pro-v0.1.0.apk
+          gh release upload v0.1.0 "AOB-Speaker-Pro-v0.1.0.apk" --clobber
